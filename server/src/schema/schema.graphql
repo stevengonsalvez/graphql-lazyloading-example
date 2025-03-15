@@ -1,0 +1,177 @@
+directive @defer on FRAGMENT_SPREAD | INLINE_FRAGMENT
+directive @stream on FIELD
+
+type Query {
+  # User account information
+  currentUser: User!
+  
+  # Top tasks section
+  topTasks: [Task!]! @stream
+  
+  # Promotional content
+  promotions: [Promotion!]! @stream
+  
+  # Product categories
+  categories: [Category!]! @stream
+  
+  # Discover section
+  discoverItems: [DiscoverItem!]! @stream
+  
+  # Device information
+  userDevices: [Device!] @stream
+  
+  # Search functionality
+  search(query: String!): SearchResults!
+}
+
+type User {
+  id: ID!
+  name: String!
+  accountUpdates: [AccountUpdate!]! @stream
+  billInformation: BillInformation
+  phoneNumber: String
+  loyaltyPoints: Int
+  # This will be deferred to simulate lazy loading
+  recommendations: [Recommendation!] @defer
+}
+
+type BillInformation {
+  amount: Float!
+  dueDate: String!
+  isPaid: Boolean!
+  # This will be deferred to simulate lazy loading
+  historyDetails: [BillHistoryItem!] @defer
+  unlimitedData: Boolean
+}
+
+type BillHistoryItem {
+  date: String!
+  amount: Float!
+  status: String!
+}
+
+type Task {
+  id: ID!
+  title: String!
+  description: String
+  actionUrl: String
+  iconType: String
+}
+
+type AccountUpdate {
+  id: ID!
+  type: String!
+  message: String!
+  date: String!
+  isRead: Boolean!
+}
+
+type Recommendation {
+  id: ID!
+  title: String!
+  description: String!
+  imageUrl: String
+  actionUrl: String
+}
+
+type Promotion {
+  id: ID!
+  title: String!
+  description: String!
+  imageUrl: String!
+  actionUrl: String
+  # Additional details that can be deferred
+  details: PromotionDetails @defer
+}
+
+type PromotionDetails {
+  termsAndConditions: String!
+  validUntil: String
+  eligibility: String
+  # Further information can be streamed
+  benefits: [String!] @stream
+}
+
+type Category {
+  id: ID!
+  name: String!
+  iconUrl: String
+  # Products in this category can be streamed
+  products: [Product!] @stream
+}
+
+type Product {
+  id: ID!
+  name: String!
+  description: String
+  imageUrl: String
+  price: Float
+  # Details can be deferred for lazy loading
+  details: ProductDetails @defer
+}
+
+type ProductDetails {
+  specifications: [Specification!] @stream
+  reviews: [Review!] @stream
+  relatedProducts: [Product!] @stream
+}
+
+type Specification {
+  name: String!
+  value: String!
+}
+
+type Review {
+  id: ID!
+  author: String!
+  rating: Int!
+  comment: String
+  date: String!
+}
+
+type DiscoverItem {
+  id: ID!
+  title: String!
+  description: String!
+  imageUrl: String!
+  price: Float
+  actionUrl: String
+  type: String
+  # Additional information can be deferred
+  additionalInfo: String @defer
+}
+
+type Device {
+  id: ID!
+  name: String!
+  type: String!
+  imageUrl: String
+  # Technical details can be deferred
+  technicalDetails: DeviceDetails @defer
+}
+
+type DeviceDetails {
+  serialNumber: String
+  model: String
+  purchaseDate: String
+  warrantyEnd: String
+  # Support information can be streamed
+  supportOptions: [String!] @stream
+}
+
+type SearchResults {
+  # Different types of search results can be streamed
+  devices: [Device!] @stream
+  plans: [Product!] @stream
+  accessories: [Product!] @stream
+  helpArticles: [HelpArticle!] @stream
+}
+
+type HelpArticle {
+  id: ID!
+  title: String!
+  summary: String!
+  url: String!
+  # Full content can be deferred
+  fullContent: String @defer
+}

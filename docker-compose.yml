@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  # GraphQL Server
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    ports:
+      - "4000:4000"
+    environment:
+      - NODE_ENV=development
+    command: npm run dev
+    
+  # React Client
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - WDS_SOCKET_PORT=0
+    depends_on:
+      - server
+    command: npm start

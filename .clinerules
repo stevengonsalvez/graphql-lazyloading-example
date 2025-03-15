@@ -1,0 +1,117 @@
+# Project Intelligence for GraphQL Lazy Loading POC
+
+## Code Organization Patterns
+
+1. **Server Structure**
+   - Schema files go in `/server/src/schema/`
+   - Resolvers go in `/server/src/resolvers/`
+   - Mock data generators go in `/server/src/mocks/`
+
+2. **Client Structure**
+   - Component files go in `/client/src/components/`
+   - GraphQL queries go in `/client/src/graphql/`
+   - Apollo setup is in `/client/src/apollo-client.ts`
+
+3. **React Component Pattern**
+   - Each component handles its own loading states
+   - Components should destructure data with defaults for safety
+   - Use TypeScript interfaces for component props
+
+## Technical Implementation Notes
+
+1. **GraphQL Yoga Configuration**
+   - Must use `makeExecutableSchema` from `@graphql-tools/schema` to create schema
+   - Don't pass `typeDefs` directly to Yoga; use the `schema` property instead
+   - CORS should be enabled for development
+   - GraphiQL is enabled for testing
+   - The server must have `assumeImmutableResults: false` for incremental delivery
+
+2. **Apollo Client Configuration**
+   - Must set `assumeImmutableResults: false` in client options
+   - Use `fetchPolicy: 'cache-and-network'` for queries
+   - Import directives must be explicitly enabled
+
+3. **Resolver Implementation**
+   - Use generator functions (`async function*`) for streaming
+   - Use the `delay()` helper function for artificial delays
+   - Deferred fields should have longer delays than immediate fields
+
+4. **Mock Data Strategy**
+   - Use consistent IDs and references between related entities
+   - Keep mock data realistic to demonstrate real-world scenarios
+   - Use TypeScript interfaces that match GraphQL types
+
+## Common Issues and Solutions
+
+1. **TypeScript Configuration with GraphQL Yoga**
+   - Error: "Object literal may only specify known properties, and 'typeDefs' does not exist in type 'YogaSchemaDefinition<{}, {}>'"
+   - Solution: Use `makeExecutableSchema` from `@graphql-tools/schema` to create schema, then pass it to Yoga
+   - Example:
+   ```typescript
+   import { makeExecutableSchema } from '@graphql-tools/schema';
+   
+   const schema = makeExecutableSchema({
+     typeDefs,
+     resolvers,
+   });
+   
+   const yoga = createYoga({
+     schema,
+     // other options
+   });
+   ```
+
+2. **Missing Dependencies**
+   - Add `@graphql-tools/schema` to package.json
+   - Make sure all dependencies are properly installed with `npm install`
+
+## User Preferences
+
+1. **Code Style**
+   - Use TypeScript for all code
+   - Use functional components with hooks in React
+   - Prefer explicit typing over inference where possible
+
+2. **Documentation**
+   - Include comments for complex logic
+   - Document loading behavior in components
+   - Keep README files updated with latest setup instructions
+
+3. **Development Process**
+   - Use Docker for consistent development environment
+   - Test both server and client separately before integration
+   - Document new patterns as they emerge
+
+## Known Challenges
+
+1. **Browser Support for Incremental Delivery**
+   - Not all browsers fully support streaming responses
+   - Test in Chrome for best compatibility
+   - Consider adding a browser compatibility check
+
+2. **TypeScript Type Safety with Deferred Fields**
+   - Deferred fields may appear as undefined initially
+   - Use optional chaining (`?.`) and nullish coalescing (`??`)
+   - Check for existence before accessing nested properties
+
+3. **Handling Partially Failed Queries**
+   - Deferred fields may fail while initial fields succeed
+   - Implement error boundaries for partial failures
+   - Provide retry mechanisms for failed deferred operations
+
+## Project Workflow
+
+1. **Development Setup**
+   - Start server: `cd server && npm install && npm start`
+   - Start client: `cd client && npm install && npm start`
+   - Or use Docker: `docker-compose up`
+
+2. **Testing GraphQL Queries**
+   - Use GraphiQL at `http://localhost:4000/graphql`
+   - Test queries with and without defer/stream directives
+   - Use browser network inspector to view incremental responses
+
+3. **Deployment**
+   - Build with Docker: `docker build -t gql-lazy-loading .`
+   - Run container: `docker run -p 4000:4000 gql-lazy-loading`
+   - Application will be available at `http://localhost:4000`
