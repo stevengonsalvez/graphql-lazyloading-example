@@ -1,6 +1,7 @@
 import React from 'react';
 import { useQuery } from '@apollo/client';
 import { HOME_PAGE_QUERY } from '../graphql/queries';
+import { Task } from '../types';
 
 const TopTasks: React.FC = () => {
   const { data, loading } = useQuery(HOME_PAGE_QUERY);
@@ -97,7 +98,7 @@ const TopTasks: React.FC = () => {
         {/* Show tasks as they stream in */}
         {tasks.length > 0 && (
           <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
-            {tasks.map(task => (
+            {tasks.map((task: Task) => (
               <div key={task.id} className="ee-card text-center">
                 <div className="w-10 h-10 mx-auto bg-gray-100 rounded-full flex items-center justify-center mb-2">
                   <svg className="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">

@@ -1,9 +1,8 @@
 import { createServer } from 'node:http';
-import { createYoga } from 'graphql-yoga';
+import { createYoga, createSchema } from 'graphql-yoga';
 import fs from 'node:fs';
 import path from 'node:path';
 import { resolvers } from './resolvers/resolvers';
-import { makeExecutableSchema } from '@graphql-tools/schema';
 
 // Read the schema file
 const typeDefs = fs.readFileSync(
@@ -11,10 +10,11 @@ const typeDefs = fs.readFileSync(
   'utf-8'
 );
 
-// Create an executable schema
-const schema = makeExecutableSchema({
+// Create a schema using graphql-yoga's createSchema
+// This has built-in support for @defer and @stream directives
+const schema = createSchema({
   typeDefs,
-  resolvers,
+  resolvers
 });
 
 // Create the GraphQL server
@@ -22,6 +22,14 @@ const yoga = createYoga({
   schema,
   graphiql: true,  // Enable the GraphiQL interface for testing
   context: () => ({}),
+  // Explicitly enable @defer and @stream support
+  maskedErrors: false,
+  batching: true,
+  cors: {
+    origin: '*',
+    credentials: true,
+    methods: ['GET', 'POST', 'OPTIONS'],
+  },
   logging: {
     debug: (...args) => console.log(...args),
     info: (...args) => console.info(...args),

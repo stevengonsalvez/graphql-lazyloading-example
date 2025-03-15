@@ -13,12 +13,10 @@ export const HOME_PAGE_QUERY = gql`
         dueDate
         isPaid
         unlimitedData
-        ... on BillInformation @defer {
-          historyDetails {
-            date
-            amount
-            status
-          }
+        historyDetails @defer {
+          date
+          amount
+          status
         }
       }
       accountUpdates @stream {
@@ -28,14 +26,12 @@ export const HOME_PAGE_QUERY = gql`
         date
         isRead
       }
-      ... on User @defer {
-        recommendations {
-          id
-          title
-          description
-          imageUrl
-          actionUrl
-        }
+      recommendations @defer {
+        id
+        title
+        description
+        imageUrl
+        actionUrl
       }
     }
     
@@ -53,15 +49,11 @@ export const HOME_PAGE_QUERY = gql`
       description
       imageUrl
       actionUrl
-      ... on Promotion @defer {
-        details {
-          termsAndConditions
-          validUntil
-          eligibility
-          benefits @stream {
-            # Will stream each benefit as it arrives
-          }
-        }
+      details @defer {
+        termsAndConditions
+        validUntil
+        eligibility
+        benefits @stream
       }
     }
     
@@ -79,9 +71,7 @@ export const HOME_PAGE_QUERY = gql`
       price
       actionUrl
       type
-      ... on DiscoverItem @defer {
-        additionalInfo
-      }
+      additionalInfo @defer
     }
   }
 `;
@@ -93,25 +83,23 @@ export const CATEGORY_WITH_PRODUCTS_QUERY = gql`
       id
       name
       iconUrl
-      products @stream(if: $categoryId == id) {
+      products @stream(if: true) {
         id
         name
         description
         imageUrl
         price
-        ... on Product @defer {
-          details {
-            specifications @stream {
-              name
-              value
-            }
-            reviews @stream {
-              id
-              author
-              rating
-              comment
-              date
-            }
+        details @defer {
+          specifications @stream {
+            name
+            value
+          }
+          reviews @stream {
+            id
+            author
+            rating
+            comment
+            date
           }
         }
       }
@@ -127,16 +115,12 @@ export const USER_DEVICES_QUERY = gql`
       name
       type
       imageUrl
-      ... on Device @defer {
-        technicalDetails {
-          serialNumber
-          model
-          purchaseDate
-          warrantyEnd
-          supportOptions @stream {
-            # Will stream each support option
-          }
-        }
+      technicalDetails @defer {
+        serialNumber
+        model
+        purchaseDate
+        warrantyEnd
+        supportOptions @stream
       }
     }
   }
@@ -169,9 +153,7 @@ export const SEARCH_QUERY = gql`
         title
         summary
         url
-        ... on HelpArticle @defer {
-          fullContent
-        }
+        fullContent @defer
       }
     }
   }

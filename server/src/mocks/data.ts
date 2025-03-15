@@ -1,7 +1,10 @@
 // Mock data generators for our GraphQL server
 
-// Helper function to simulate async delay
-export const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+// Helper function to log and delay
+export const delay = async (ms: number) => {
+  console.log(`Delaying response for ${ms}ms`);
+  return new Promise(resolve => setTimeout(resolve, ms));
+};
 
 // Current user mock data
 export const currentUserMock = {

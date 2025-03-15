@@ -1,24 +1,24 @@
-directive @defer on FRAGMENT_SPREAD | INLINE_FRAGMENT
-directive @stream on FIELD
+directive @defer(if: Boolean = true, label: String) on FRAGMENT_SPREAD | INLINE_FRAGMENT
+directive @stream(if: Boolean = true, label: String, initialCount: Int = 0) on FIELD
 
 type Query {
   # User account information
   currentUser: User!
   
   # Top tasks section
-  topTasks: [Task!]! @stream
+  topTasks: [Task!]!
   
   # Promotional content
-  promotions: [Promotion!]! @stream
+  promotions: [Promotion!]!
   
   # Product categories
-  categories: [Category!]! @stream
+  categories: [Category!]!
   
   # Discover section
-  discoverItems: [DiscoverItem!]! @stream
+  discoverItems: [DiscoverItem!]!
   
   # Device information
-  userDevices: [Device!] @stream
+  userDevices: [Device!]
   
   # Search functionality
   search(query: String!): SearchResults!
@@ -27,12 +27,12 @@ type Query {
 type User {
   id: ID!
   name: String!
-  accountUpdates: [AccountUpdate!]! @stream
-  billInformation: BillInformation
+  accountUpdates: [AccountUpdate!]!
   phoneNumber: String
   loyaltyPoints: Int
+  billInformation: BillInformation
   # This will be deferred to simulate lazy loading
-  recommendations: [Recommendation!] @defer
+  recommendations: [Recommendation!]
 }
 
 type BillInformation {
@@ -40,7 +40,7 @@ type BillInformation {
   dueDate: String!
   isPaid: Boolean!
   # This will be deferred to simulate lazy loading
-  historyDetails: [BillHistoryItem!] @defer
+  historyDetails: [BillHistoryItem!]
   unlimitedData: Boolean
 }
 
@@ -81,7 +81,7 @@ type Promotion {
   imageUrl: String!
   actionUrl: String
   # Additional details that can be deferred
-  details: PromotionDetails @defer
+  details: PromotionDetails
 }
 
 type PromotionDetails {
@@ -89,7 +89,7 @@ type PromotionDetails {
   validUntil: String
   eligibility: String
   # Further information can be streamed
-  benefits: [String!] @stream
+  benefits: [String!]
 }
 
 type Category {
@@ -97,7 +97,7 @@ type Category {
   name: String!
   iconUrl: String
   # Products in this category can be streamed
-  products: [Product!] @stream
+  products: [Product!]
 }
 
 type Product {
@@ -107,13 +107,13 @@ type Product {
   imageUrl: String
   price: Float
   # Details can be deferred for lazy loading
-  details: ProductDetails @defer
+  details: ProductDetails
 }
 
 type ProductDetails {
-  specifications: [Specification!] @stream
-  reviews: [Review!] @stream
-  relatedProducts: [Product!] @stream
+  specifications: [Specification!]
+  reviews: [Review!]
+  relatedProducts: [Product!]
 }
 
 type Specification {
@@ -138,7 +138,7 @@ type DiscoverItem {
   actionUrl: String
   type: String
   # Additional information can be deferred
-  additionalInfo: String @defer
+  additionalInfo: String
 }
 
 type Device {
@@ -147,7 +147,7 @@ type Device {
   type: String!
   imageUrl: String
   # Technical details can be deferred
-  technicalDetails: DeviceDetails @defer
+  technicalDetails: DeviceDetails
 }
 
 type DeviceDetails {
@@ -156,15 +156,15 @@ type DeviceDetails {
   purchaseDate: String
   warrantyEnd: String
   # Support information can be streamed
-  supportOptions: [String!] @stream
+  supportOptions: [String!]
 }
 
 type SearchResults {
   # Different types of search results can be streamed
-  devices: [Device!] @stream
-  plans: [Product!] @stream
-  accessories: [Product!] @stream
-  helpArticles: [HelpArticle!] @stream
+  devices: [Device!]
+  plans: [Product!]
+  accessories: [Product!]
+  helpArticles: [HelpArticle!]
 }
 
 type HelpArticle {
@@ -173,5 +173,5 @@ type HelpArticle {
   summary: String!
   url: String!
   # Full content can be deferred
-  fullContent: String @defer
+  fullContent: String
 }

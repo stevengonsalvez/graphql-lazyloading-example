@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery } from '@apollo/client';
 import { HOME_PAGE_QUERY } from '../graphql/queries';
+import { DiscoverItem } from '../types';
 
 const DiscoverItems: React.FC = () => {
   const { data, loading } = useQuery(HOME_PAGE_QUERY);
@@ -30,7 +31,7 @@ const DiscoverItems: React.FC = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            {discoverItems.map(item => (
+            {discoverItems.map((item: DiscoverItem) => (
               <div key={item.id} className="group">
                 {/* Item Image */}
                 <div className="h-48 bg-gray-100 rounded-lg mb-3 overflow-hidden">

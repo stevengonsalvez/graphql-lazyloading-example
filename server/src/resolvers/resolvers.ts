@@ -38,22 +38,22 @@ export const resolvers = {
     
     // Get discover items
     discoverItems: async () => {
-      // Simulate a 600ms delay for discover items
-      await delay(600);
+      // Simulate a 1.5s delay for discover items
+      await delay(1500);
       return discoverItemsMock;
     },
     
     // Get user devices
     userDevices: async () => {
-      // Simulate a 700ms delay for user devices
-      await delay(700);
+      // Simulate a 2s delay for user devices
+      await delay(2000);
       return userDevicesMock;
     },
     
     // Search functionality
     search: async (_: any, { query }: { query: string }) => {
       // Simulate a search operation
-      await delay(300);
+      await delay(800);
       return {
         devices: query ? userDevicesMock.filter(d => 
           d.name.toLowerCase().includes(query.toLowerCase())
@@ -77,13 +77,13 @@ export const resolvers = {
     // Deferred loading of recommendations
     recommendations: async () => {
       // Simulate a longer delay for recommendations
-      await delay(1500);
+      await delay(5000);
       return currentUserMock.recommendations;
     },
     // Account updates with streaming
     accountUpdates: async function* () {
       for (const update of currentUserMock.accountUpdates) {
-        await delay(300); // Simulate delay between items
+        await delay(500); // Simulate delay between items
         yield update;
       }
     }
@@ -93,7 +93,7 @@ export const resolvers = {
     // Deferred loading of bill history
     historyDetails: async () => {
       // Simulate a delay for bill history
-      await delay(1200);
+      await delay(3500);
       return currentUserMock.billInformation.historyDetails;
     }
   },
@@ -102,7 +102,7 @@ export const resolvers = {
     // Deferred loading of promotion details
     details: async (parent: any) => {
       // Simulate a delay for promotion details
-      await delay(800);
+      await delay(1200);
       return parent.details;
     }
   },
@@ -111,7 +111,7 @@ export const resolvers = {
     // Stream benefits
     benefits: async function* (parent: any) {
       for (const benefit of parent.benefits) {
-        await delay(200); // Simulate delay between benefits
+        await delay(350); // Simulate delay between benefits
         yield benefit;
       }
     }
@@ -121,7 +121,7 @@ export const resolvers = {
     // Stream products in categories
     products: async function* (parent: any) {
       for (const product of parent.products) {
-        await delay(300); // Simulate delay between products
+        await delay(600); // Simulate delay between products
         yield product;
       }
     }
@@ -131,7 +131,7 @@ export const resolvers = {
     // Deferred loading of product details
     details: async (parent: any) => {
       // Simulate a delay for product details
-      await delay(1000);
+      await delay(4200);
       return parent.details;
     }
   },
@@ -140,21 +140,21 @@ export const resolvers = {
     // Stream specifications
     specifications: async function* (parent: any) {
       for (const spec of parent.specifications) {
-        await delay(150); // Simulate delay between specs
+        await delay(250); // Simulate delay between specs
         yield spec;
       }
     },
     // Stream reviews
     reviews: async function* (parent: any) {
       for (const review of parent.reviews) {
-        await delay(250); // Simulate delay between reviews
+        await delay(700); // Simulate delay between reviews
         yield review;
       }
     },
     // Stream related products
     relatedProducts: async function* (parent: any) {
       for (const product of parent.relatedProducts) {
-        await delay(200); // Simulate delay between related products
+        await delay(450); // Simulate delay between related products
         yield product;
       }
     }
@@ -164,7 +164,7 @@ export const resolvers = {
     // Deferred loading of additional info
     additionalInfo: async (parent: any) => {
       // Simulate a delay for additional info
-      await delay(900);
+      await delay(2800);
       return parent.additionalInfo;
     }
   },
@@ -173,7 +173,7 @@ export const resolvers = {
     // Deferred loading of device technical details
     technicalDetails: async (parent: any) => {
       // Simulate a delay for technical details
-      await delay(1100);
+      await delay(6000);
       return parent.technicalDetails;
     }
   },
@@ -182,7 +182,7 @@ export const resolvers = {
     // Stream support options
     supportOptions: async function* (parent: any) {
       for (const option of parent.supportOptions) {
-        await delay(180); // Simulate delay between support options
+        await delay(400); // Simulate delay between support options
         yield option;
       }
     }
@@ -192,28 +192,28 @@ export const resolvers = {
     // Stream devices in search results
     devices: async function* (parent: any) {
       for (const device of parent.devices) {
-        await delay(200); // Simulate delay between devices
+        await delay(300); // Simulate delay between devices
         yield device;
       }
     },
     // Stream plans in search results
     plans: async function* (parent: any) {
       for (const plan of parent.plans) {
-        await delay(250); // Simulate delay between plans
+        await delay(550); // Simulate delay between plans
         yield plan;
       }
     },
     // Stream accessories in search results
     accessories: async function* (parent: any) {
       for (const accessory of parent.accessories) {
-        await delay(220); // Simulate delay between accessories
+        await delay(400); // Simulate delay between accessories
         yield accessory;
       }
     },
     // Stream help articles in search results
     helpArticles: async function* (parent: any) {
       for (const article of parent.helpArticles) {
-        await delay(280); // Simulate delay between help articles
+        await delay(500); // Simulate delay between help articles
         yield article;
       }
     }

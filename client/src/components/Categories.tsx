@@ -1,6 +1,7 @@
 import React from 'react';
 import { useQuery } from '@apollo/client';
 import { HOME_PAGE_QUERY } from '../graphql/queries';
+import { Category } from '../types';
 
 const Categories: React.FC = () => {
   const { data, loading } = useQuery(HOME_PAGE_QUERY);
@@ -18,7 +19,7 @@ const Categories: React.FC = () => {
           </div>
         ) : (
           <div className="grid grid-cols-3 md:grid-cols-6 gap-4">
-            {categories.map(category => (
+            {categories.map((category: Category) => (
               <div key={category.id} className="text-center">
                 <div className="w-16 h-16 mx-auto bg-white rounded-full shadow-sm flex items-center justify-center mb-2">
                   {/* Icon placeholder */}

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery } from '@apollo/client';
 import { USER_DEVICES_QUERY } from '../graphql/queries';
+import { Device } from '../types';
 
 const Devices: React.FC = () => {
   const { data, loading } = useQuery(USER_DEVICES_QUERY);
@@ -46,7 +47,7 @@ const Devices: React.FC = () => {
               <h4 className="font-medium mb-4">Your registered devices:</h4>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {devices.map(device => (
+                {devices.map((device: Device) => (
                   <div key={device.id} className="border rounded-lg p-4">
                     <div className="flex items-center">
                       <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mr-4">
@@ -88,7 +89,7 @@ const Devices: React.FC = () => {
                               <div className="mt-2">
                                 <p className="font-medium">Support Options:</p>
                                 <ul className="list-disc list-inside mt-1">
-                                  {device.technicalDetails.supportOptions.map((option, index) => (
+                                  {device.technicalDetails.supportOptions.map((option: string, index: number) => (
                                     <li key={index}>{option}</li>
                                   ))}
                                 </ul>

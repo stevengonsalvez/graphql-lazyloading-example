@@ -1,0 +1,73 @@
+query TestLazyLoading {
+  # Get current user with some fields immediately, others deferred
+  currentUser {
+    id
+    name
+    phoneNumber
+    loyaltyPoints
+    
+    # Streamed account updates
+    accountUpdates @stream {
+      id
+      type
+      message
+      date
+      isRead
+    }
+    
+    # Deferred recommendations using inline fragment
+    ... @defer {
+      recommendations {
+        id
+        title
+        description
+        imageUrl
+      }
+    }
+    
+    # Bill information with deferred history
+    billInformation {
+      amount
+      dueDate
+      isPaid
+      unlimitedData
+      
+      # Deferred bill history using inline fragment
+      ... @defer {
+        historyDetails {
+          date
+          amount
+          status
+        }
+      }
+    }
+  }
+  
+  # Stream top tasks
+  topTasks @stream {
+    id
+    title
+    description
+    actionUrl
+  }
+  
+  # Stream promotions with deferred details
+  promotions @stream {
+    id
+    title
+    description
+    imageUrl
+    
+    # Deferred promotion details using inline fragment
+    ... @defer {
+      details {
+        termsAndConditions
+        validUntil
+        eligibility
+        
+        # Stream benefits
+        benefits @stream
+      }
+    }
+  }
+}

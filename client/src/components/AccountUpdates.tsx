@@ -1,6 +1,7 @@
 import React from 'react';
 import { useQuery } from '@apollo/client';
 import { HOME_PAGE_QUERY } from '../graphql/queries';
+import { AccountUpdate } from '../types';
 
 const AccountUpdates: React.FC = () => {
   const { data, loading } = useQuery(HOME_PAGE_QUERY);
@@ -36,7 +37,7 @@ const AccountUpdates: React.FC = () => {
           {/* Show account updates as they stream in */}
           {updates.length > 0 ? (
             <div className="space-y-3">
-              {updates.map(update => (
+              {updates.map((update: AccountUpdate) => (
                 <div key={update.id} className="border-t pt-3">
                   <h4 className="text-sm font-medium">{update.message}</h4>
                   <p className="text-xs text-gray-500 mt-1">{update.date}</p>

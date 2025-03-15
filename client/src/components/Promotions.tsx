@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery } from '@apollo/client';
 import { HOME_PAGE_QUERY } from '../graphql/queries';
+import { Promotion } from '../types';
 
 const Promotions: React.FC = () => {
   const { data, loading } = useQuery(HOME_PAGE_QUERY);
@@ -31,7 +32,7 @@ const Promotions: React.FC = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            {promotions.map(promo => (
+            {promotions.map((promo: Promotion) => (
               <div key={promo.id} className="ee-card relative overflow-hidden group">
                 {/* Promo Image */}
                 <div className="h-32 bg-gray-100 rounded mb-3 overflow-hidden">
@@ -66,11 +67,11 @@ const Promotions: React.FC = () => {
                     <p className="mt-1">{promo.details.termsAndConditions}</p>
                     
                     {/* Benefits loaded via @stream */}
-                    {promo.details.benefits && promo.details.benefits.length > 0 && (
+                    {promo.details?.benefits && promo.details.benefits.length > 0 && (
                       <div className="mt-2">
                         <p className="font-medium">Benefits:</p>
                         <ul className="list-disc list-inside mt-1">
-                          {promo.details.benefits.map((benefit, index) => (
+                          {promo.details?.benefits.map((benefit: string, index: number) => (
                             <li key={index} className="text-gray-600">{benefit}</li>
                           ))}
                         </ul>

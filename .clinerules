@@ -19,51 +19,82 @@
 
 ## Technical Implementation Notes
 
-1. **GraphQL Yoga Configuration**
-   - Must use `makeExecutableSchema` from `@graphql-tools/schema` to create schema
-   - Don't pass `typeDefs` directly to Yoga; use the `schema` property instead
-   - CORS should be enabled for development
-   - GraphiQL is enabled for testing
-   - The server must have `assumeImmutableResults: false` for incremental delivery
+1. **GraphQL Directive Usage**
+   - `@defer` must be used on FRAGMENT_SPREAD or INLINE_FRAGMENT, not directly on fields
+     - Correct: `fieldName @defer { subfield }`
+     - Incorrect: `fieldName: Type @defer`
+   - `@stream` must be used on FIELD selections, not on field definitions
+     - Correct: `listField @stream { ... }`
+     - Incorrect: `listField: [Type] @stream`
+   - Directive definitions must be included in the schema:
+     ```graphql
+     directive @defer(if: Boolean = true, label: String) on FRAGMENT_SPREAD | INLINE_FRAGMENT
+     directive @stream(if: Boolean = true, label: String, initialCount: Int = 0) on FIELD
+     ```
 
-2. **Apollo Client Configuration**
+2. **GraphQL Yoga Configuration**
+   - Use `createSchema` from 'graphql-yoga' instead of makeExecutableSchema
+   - Configure Yoga server with the created schema
+   - Example:
+   ```typescript
+   import { createSchema, createYoga } from 'graphql-yoga';
+   
+   const schema = createSchema({
+     typeDefs,
+     resolvers
+   });
+   
+   const yoga = createYoga({ schema });
+   ```
+
+3. **Apollo Client Configuration**
    - Must set `assumeImmutableResults: false` in client options
    - Use `fetchPolicy: 'cache-and-network'` for queries
    - Import directives must be explicitly enabled
 
-3. **Resolver Implementation**
+4. **Resolver Implementation**
    - Use generator functions (`async function*`) for streaming
    - Use the `delay()` helper function for artificial delays
    - Deferred fields should have longer delays than immediate fields
 
-4. **Mock Data Strategy**
-   - Use consistent IDs and references between related entities
-   - Keep mock data realistic to demonstrate real-world scenarios
-   - Use TypeScript interfaces that match GraphQL types
-
 ## Common Issues and Solutions
 
-1. **TypeScript Configuration with GraphQL Yoga**
-   - Error: "Object literal may only specify known properties, and 'typeDefs' does not exist in type 'YogaSchemaDefinition<{}, {}>'"
-   - Solution: Use `makeExecutableSchema` from `@graphql-tools/schema` to create schema, then pass it to Yoga
-   - Example:
-   ```typescript
-   import { makeExecutableSchema } from '@graphql-tools/schema';
-   
-   const schema = makeExecutableSchema({
-     typeDefs,
-     resolvers,
-   });
-   
-   const yoga = createYoga({
-     schema,
-     // other options
-   });
-   ```
+1. **Directive Location Errors**
+   - Error: "Directive '@stream' may not be used on FIELD_DEFINITION"
+   - Solution: 
+     - Define directives in schema with proper locations
+     - Use `@defer` on fragments, not fields
+     - Use `@stream` on field selections, not definitions
 
-2. **Missing Dependencies**
-   - Add `@graphql-tools/schema` to package.json
-   - Make sure all dependencies are properly installed with `npm install`
+2. **GraphQL Yoga Configuration Issues**
+   - Use `createSchema` from GraphQL Yoga directly
+   - Don't use `makeExecutableSchema` from `@graphql-tools/schema`
+
+3. **TypeScript Configuration Issues**
+   - Error: "Object literal may only specify known properties, and 'typeDefs' does not exist in type 'YogaSchemaDefinition<{}, {}>'"
+   - Solution: Use proper Yoga API with `createSchema`
+
+4. **Client Query Structure**
+   - Queries must use directives at the correct locations
+   - Example:
+   ```graphql
+   query {
+     user {
+       # Use @defer on a fragment
+       ... @defer {
+         detailedInfo {
+           field1
+           field2
+         }
+       }
+       # Use @stream on field selections
+       friends @stream {
+         name
+         id
+       }
+     }
+   }
+   ```
 
 ## User Preferences
 
