@@ -215,7 +215,7 @@ export const USER_BILL_QUERY = gql`
       phoneNumber
       
       # Bill information loads second (deferred)
-      ... @defer(label: "bill-info") {
+      ... @defer(label: "billInformation") {
         billInformation {
           amount
           dueDate
@@ -223,7 +223,7 @@ export const USER_BILL_QUERY = gql`
           unlimitedData
           
           # Bill history loads last (nested deferred)
-          ... @defer(label: "bill-history") {
+          ... @defer(label: "billHistory") {
             historyDetails {
               date
               amount

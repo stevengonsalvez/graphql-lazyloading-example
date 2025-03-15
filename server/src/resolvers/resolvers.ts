@@ -74,6 +74,14 @@ export const resolvers = {
   },
   
   User: {
+    // Deferred loading of bill information
+    billInformation: async () => {
+      // Simulate a 2-second delay for bill information
+      console.log('Resolving billInformation with 2-second delay...');
+      await delay(2000);
+      return currentUserMock.billInformation;
+    },
+    
     // Deferred loading of recommendations
     recommendations: async () => {
       // Simulate a longer delay for recommendations
