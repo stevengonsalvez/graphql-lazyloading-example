@@ -8,70 +8,90 @@ export const HOME_PAGE_QUERY = gql`
       name
       phoneNumber
       loyaltyPoints
-      billInformation {
-        amount
-        dueDate
-        isPaid
-        unlimitedData
-        historyDetails @defer {
-          date
+      ... @defer {
+        billInformation {
           amount
-          status
+          dueDate
+          isPaid
+          unlimitedData
+          historyDetails {
+            date
+            amount
+            status
+          }
         }
       }
-      accountUpdates @stream {
-        id
-        type
-        message
-        date
-        isRead
+      ... @stream {
+        accountUpdates {
+          id
+          type
+          message
+          date
+          isRead
+        }
       }
-      recommendations @defer {
+      ... @defer {
+        recommendations {
+          id
+          title
+          description
+          imageUrl
+          actionUrl
+        }
+      }
+    }
+    
+    ... @stream {
+      topTasks {
+        id
+        title
+        description
+        actionUrl
+        iconType
+      }
+    }
+    
+    ... @stream {
+      promotions {
         id
         title
         description
         imageUrl
         actionUrl
+        ... @defer {
+          details {
+            termsAndConditions
+            validUntil
+            eligibility
+            ... @stream {
+              benefits
+            }
+          }
+        }
       }
     }
     
-    topTasks @stream {
-      id
-      title
-      description
-      actionUrl
-      iconType
-    }
-    
-    promotions @stream {
-      id
-      title
-      description
-      imageUrl
-      actionUrl
-      details @defer {
-        termsAndConditions
-        validUntil
-        eligibility
-        benefits @stream
+    ... @stream {
+      categories {
+        id
+        name
+        iconUrl
       }
     }
     
-    categories @stream {
-      id
-      name
-      iconUrl
-    }
-    
-    discoverItems @stream {
-      id
-      title
-      description
-      imageUrl
-      price
-      actionUrl
-      type
-      additionalInfo @defer
+    ... @stream {
+      discoverItems {
+        id
+        title
+        description
+        imageUrl
+        price
+        actionUrl
+        type
+        ... @defer {
+          additionalInfo
+        }
+      }
     }
   }
 `;
@@ -79,27 +99,37 @@ export const HOME_PAGE_QUERY = gql`
 // Query for product categories with products streamed
 export const CATEGORY_WITH_PRODUCTS_QUERY = gql`
   query CategoryWithProductsQuery($categoryId: ID!) {
-    categories @stream {
-      id
-      name
-      iconUrl
-      products @stream(if: true) {
+    ... @stream {
+      categories {
         id
         name
-        description
-        imageUrl
-        price
-        details @defer {
-          specifications @stream {
-            name
-            value
-          }
-          reviews @stream {
+        iconUrl
+        ... @stream {
+          products {
             id
-            author
-            rating
-            comment
-            date
+            name
+            description
+            imageUrl
+            price
+            ... @defer {
+              details {
+                ... @stream {
+                  specifications {
+                    name
+                    value
+                  }
+                }
+                ... @stream {
+                  reviews {
+                    id
+                    author
+                    rating
+                    comment
+                    date
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -110,17 +140,23 @@ export const CATEGORY_WITH_PRODUCTS_QUERY = gql`
 // Query for user devices with deferred technical details
 export const USER_DEVICES_QUERY = gql`
   query UserDevicesQuery {
-    userDevices @stream {
-      id
-      name
-      type
-      imageUrl
-      technicalDetails @defer {
-        serialNumber
-        model
-        purchaseDate
-        warrantyEnd
-        supportOptions @stream
+    ... @stream {
+      userDevices {
+        id
+        name
+        type
+        imageUrl
+        ... @defer {
+          technicalDetails {
+            serialNumber
+            model
+            purchaseDate
+            warrantyEnd
+            ... @stream {
+              supportOptions
+            }
+          }
+        }
       }
     }
   }
@@ -130,30 +166,71 @@ export const USER_DEVICES_QUERY = gql`
 export const SEARCH_QUERY = gql`
   query SearchQuery($query: String!) {
     search(query: $query) {
-      devices @stream {
-        id
-        name
-        type
-        imageUrl
+      ... @stream {
+        devices {
+          id
+          name
+          type
+          imageUrl
+        }
       }
-      plans @stream {
-        id
-        name
-        description
-        price
+      ... @stream {
+        plans {
+          id
+          name
+          description
+          price
+        }
       }
-      accessories @stream {
-        id
-        name
-        description
-        price
+      ... @stream {
+        accessories {
+          id
+          name
+          description
+          price
+        }
       }
-      helpArticles @stream {
-        id
-        title
-        summary
-        url
-        fullContent @defer
+      ... @stream {
+        helpArticles {
+          id
+          title
+          summary
+          url
+          ... @defer {
+            fullContent
+          }
+        }
+      }
+    }
+  }
+`;
+
+// Single query for the POC with progressive loading using @defer
+export const USER_BILL_QUERY = gql`
+  query UserBillQuery {
+    # User info loads first (immediately)
+    currentUser {
+      id
+      name
+      phoneNumber
+      
+      # Bill information loads second (deferred)
+      ... @defer(label: "bill-info") {
+        billInformation {
+          amount
+          dueDate
+          isPaid
+          unlimitedData
+          
+          # Bill history loads last (nested deferred)
+          ... @defer(label: "bill-history") {
+            historyDetails {
+              date
+              amount
+              status
+            }
+          }
+        }
       }
     }
   }

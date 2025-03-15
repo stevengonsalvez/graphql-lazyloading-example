@@ -1,6 +1,8 @@
 import React from 'react';
 import { ApolloProvider } from '@apollo/client';
 import client from './apollo-client';
+import DeferDemo from './components/DeferDemo';
+import NetworkMonitor from './components/NetworkMonitor';
 
 // Import all components
 import Header from './components/Header';
@@ -31,19 +33,9 @@ const LazyLoadDebugger: React.FC = () => {
 const App: React.FC = () => {
   return (
     <ApolloProvider client={client}>
-      <div className="min-h-screen flex flex-col">
-        <Header />
-        <main className="flex-grow">
-          <UserGreeting />
-          <TopTasks />
-          <AccountUpdates />
-          <Promotions />
-          <Categories />
-          <DiscoverItems />
-          <Devices />
-        </main>
-        <Footer />
-        <LazyLoadDebugger />
+      <div className="min-h-screen bg-gray-50 py-8">
+        <DeferDemo />
+        <NetworkMonitor />
       </div>
     </ApolloProvider>
   );

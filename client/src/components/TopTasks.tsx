@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useQuery } from '@apollo/client';
 import { HOME_PAGE_QUERY } from '../graphql/queries';
-import { Task } from '../types';
+import { Task, BillHistoryDetail } from '../types';
 
 const TopTasks: React.FC = () => {
   const { data, loading } = useQuery(HOME_PAGE_QUERY);
   const tasks = data?.topTasks || [];
   const billInfo = data?.currentUser?.billInformation;
+  const [showBillHistory, setShowBillHistory] = useState(false);
 
   return (
     <div className="py-4">
@@ -29,9 +30,28 @@ const TopTasks: React.FC = () => {
                   <span className="inline-block w-2 h-2 rounded-full bg-green-300 mr-1"></span>
                   <span>{billInfo.isPaid ? 'Paid' : 'Due soon'}</span>
                 </div>
-                <button className="mt-3 text-xs bg-white bg-opacity-20 hover:bg-opacity-30 transition-colors py-1 px-3 rounded-full">
-                  View my bill
+                <button 
+                  className="mt-3 text-xs bg-white bg-opacity-20 hover:bg-opacity-30 transition-colors py-1 px-3 rounded-full"
+                  onClick={() => setShowBillHistory(!showBillHistory)}
+                >
+                  {showBillHistory ? 'Hide history' : 'View my bill'}
                 </button>
+                
+                {/* Bill History */}
+                {showBillHistory && billInfo.historyDetails && (
+                  <div className="mt-3 p-2 bg-white bg-opacity-10 rounded text-sm">
+                    <h4 className="font-medium text-xs mb-2">Bill History:</h4>
+                    <div className="space-y-2">
+                      {billInfo.historyDetails.map((item: BillHistoryDetail, index: number) => (
+                        <div key={index} className="flex justify-between text-xs">
+                          <span>{item.date}</span>
+                          <span>£{item.amount.toFixed(2)}</span>
+                          <span className="text-green-200">{item.status}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </>
             )}
           </div>

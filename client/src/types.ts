@@ -25,11 +25,11 @@ export interface BillInformation {
   historyDetails: BillHistoryDetail[];
 }
 
-export interface BillHistoryDetail {
+export type BillHistoryDetail = {
   date: string;
   amount: number;
   status: string;
-}
+};
 
 export interface Recommendation {
   id: string;

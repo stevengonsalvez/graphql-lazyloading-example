@@ -1,31 +1,76 @@
-import { ApolloClient, InMemoryCache, HttpLink } from '@apollo/client';
+import { ApolloClient, InMemoryCache, HttpLink, ApolloLink } from '@apollo/client';
 
-// Create the HTTP link to connect to our GraphQL server
-const httpLink = new HttpLink({
-  uri: '/graphql',  // This will use the proxy setting in package.json
-  includeExtensions: true, // Required for @defer/@stream
+// Create a debug link for logging requests and responses
+const debugLink = new ApolloLink((operation, forward) => {
+  const { operationName, variables } = operation;
+  
+  console.log(`GraphQL Request: ${operationName}`, {
+    query: operation.query?.loc?.source?.body,
+    variables,
+  });
+  
+  return forward(operation).map((response) => {
+    // Safe access to hasNext property (might exist at runtime but not in TypeScript types)
+    const hasNext = 'hasNext' in response ? response.hasNext : undefined;
+    
+    console.log(`GraphQL Response: ${operationName}`, {
+      data: response.data,
+      errors: response.errors,
+      hasNext,
+      isDeferred: hasNext === true,
+    });
+    return response;
+  });
 });
 
-// Configure the client to handle @defer and @stream directives
+// Create the HTTP link with multipart configuration for @defer
+const httpLink = new HttpLink({
+  uri: 'http://localhost:4000/graphql',
+  credentials: 'same-origin',
+  includeExtensions: true,
+  headers: {
+    'Accept': 'multipart/mixed; deferSpec=20220824, application/json'
+  }
+});
+
+// Combine the links
+const link = ApolloLink.from([debugLink, httpLink]);
+
+// Configure the Apollo Client
 const client = new ApolloClient({
-  link: httpLink,
+  link,
   cache: new InMemoryCache({
-    // Required for proper handling of incremental data
-    possibleTypes: {},
-    typePolicies: {}
+    typePolicies: {
+      User: {
+        fields: {
+          billInformation: {
+            merge(existing, incoming) {
+              return { ...existing, ...incoming };
+            },
+          }
+        }
+      },
+      BillInformation: {
+        fields: {
+          historyDetails: {
+            merge(existing = [], incoming) {
+              return incoming;
+            },
+          }
+        }
+      }
+    }
   }),
   defaultOptions: {
     watchQuery: {
-      fetchPolicy: 'cache-and-network',
-      nextFetchPolicy: 'cache-first',
+      fetchPolicy: 'network-only',
+      notifyOnNetworkStatusChange: true,
     },
     query: {
       fetchPolicy: 'network-only',
+      notifyOnNetworkStatusChange: true,
     },
   },
-  // Required to enable incremental delivery support (@defer and @stream)
-  name: 'ee-lazy-loading-demo',
-  version: '1.0',
   assumeImmutableResults: false,
 });
 

@@ -1,0 +1,19 @@
+query TestDefer {
+  currentUser {
+    id
+    name
+    phoneNumber
+    billInformation {
+      amount
+      dueDate
+      isPaid
+      ... @defer {
+        historyDetails {
+          date
+          amount
+          status
+        }
+      }
+    }
+  }
+} 
