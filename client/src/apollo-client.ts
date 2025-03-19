@@ -25,7 +25,7 @@ const debugLink = new ApolloLink((operation, forward) => {
 
 // Create the HTTP link with multipart configuration for @defer
 const httpLink = new HttpLink({
-  uri: 'http://localhost:4000/graphql',
+  uri: '/graphql',
   credentials: 'same-origin',
   includeExtensions: true,
   headers: {
