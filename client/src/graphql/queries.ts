@@ -235,3 +235,102 @@ export const USER_BILL_QUERY = gql`
     }
   }
 `;
+
+// Non-lazy loading version of the same query without @defer and @stream directives
+export const USER_BILL_QUERY_EAGER = gql`
+  query UserBillQueryEager {
+    # All data loads at once
+    currentUser {
+      id
+      name
+      phoneNumber
+      billInformation {
+        amount
+        dueDate
+        isPaid
+        unlimitedData
+        historyDetails {
+          date
+          amount
+          status
+        }
+      }
+    }
+  }
+`;
+
+// Non-lazy loading version of the home page query without @defer and @stream directives
+export const HOME_PAGE_QUERY_EAGER = gql`
+  query HomePageQueryEager {
+    currentUser {
+      id
+      name
+      phoneNumber
+      loyaltyPoints
+      billInformation {
+        amount
+        dueDate
+        isPaid
+        unlimitedData
+        historyDetails {
+          date
+          amount
+          status
+        }
+      }
+      accountUpdates {
+        id
+        type
+        message
+        date
+        isRead
+      }
+      recommendations {
+        id
+        title
+        description
+        imageUrl
+        actionUrl
+      }
+    }
+    
+    topTasks {
+      id
+      title
+      description
+      actionUrl
+      iconType
+    }
+    
+    promotions {
+      id
+      title
+      description
+      imageUrl
+      actionUrl
+      details {
+        termsAndConditions
+        validUntil
+        eligibility
+        benefits
+      }
+    }
+    
+    categories {
+      id
+      name
+      iconUrl
+    }
+    
+    discoverItems {
+      id
+      title
+      description
+      imageUrl
+      price
+      actionUrl
+      type
+      additionalInfo
+    }
+  }
+`;
