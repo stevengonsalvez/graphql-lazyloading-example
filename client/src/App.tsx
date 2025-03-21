@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { ApolloProvider } from '@apollo/client';
 import client from './apollo-client';
-import DeferDemo from './components/DeferDemo';
-import EagerDemo from './components/EagerDemo';
+import ComparisonDemo from './components/ComparisonDemo';
 import NetworkMonitor from './components/NetworkMonitor';
 
 // Import all components
@@ -32,30 +31,10 @@ const LazyLoadDebugger: React.FC = () => {
 };
 
 const App: React.FC = () => {
-  const [showEager, setShowEager] = useState(false);
-  
-  const toggleDemo = () => {
-    setShowEager(!showEager);
-  };
-
   return (
     <ApolloProvider client={client}>
       <div className="min-h-screen bg-gray-50 py-8">
-        <div className="max-w-2xl mx-auto mb-4">
-          <button 
-            onClick={toggleDemo}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-          >
-            Switch to {showEager ? 'Lazy Loading' : 'Eager Loading'} Demo
-          </button>
-          <p className="mt-2 text-sm text-gray-600">
-            {showEager 
-              ? 'Currently showing: Eager Loading (standard GraphQL, all data at once)' 
-              : 'Currently showing: Lazy Loading (using @defer and @stream directives)'}
-          </p>
-        </div>
-        
-        {showEager ? <EagerDemo /> : <DeferDemo />}
+        <ComparisonDemo />
         <NetworkMonitor />
       </div>
     </ApolloProvider>
