@@ -243,7 +243,7 @@ const ComparisonDemo: React.FC = () => {
         {/* Left column - Lazy Loading with @defer */}
         <div>
           <div className="bg-gray-100 rounded-lg p-4 mb-4">
-            <h2 className="text-xl font-bold mb-3">Lazy Loading (with @defer)</h2>
+            <h2 className="text-xl font-bold mb-3">Progressive Loading from graphql</h2>
             <p className="text-sm text-gray-600 mb-4">
               Data loads progressively with the most important information first
             </p>
