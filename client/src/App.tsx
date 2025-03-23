@@ -1,7 +1,7 @@
 import React from 'react';
 import { ApolloProvider } from '@apollo/client';
 import client from './apollo-client';
-import ComparisonDemo from './components/ComparisonDemo';
+import MobileAppComparison from './components/MobileAppComparison';
 import NetworkMonitor from './components/NetworkMonitor';
 
 // Import all components
@@ -33,8 +33,8 @@ const LazyLoadDebugger: React.FC = () => {
 const App: React.FC = () => {
   return (
     <ApolloProvider client={client}>
-      <div className="min-h-screen bg-gray-50 py-8">
-        <ComparisonDemo />
+      <div className="min-h-screen bg-gray-100">
+        <MobileAppComparison />
         <NetworkMonitor />
       </div>
     </ApolloProvider>

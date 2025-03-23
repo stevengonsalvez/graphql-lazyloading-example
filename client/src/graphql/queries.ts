@@ -334,3 +334,81 @@ export const HOME_PAGE_QUERY_EAGER = gql`
     }
   }
 `;
+
+// Mobile App Queries - for lazy loading implementation
+export const MOBILE_APP_QUERY_LAZY = gql`
+  query MobileAppQueryLazy {
+    # User basic info loads immediately
+    currentUser {
+      id
+      name
+      phoneNumber
+      accountNumber
+      
+      # Mobile details base info loads with small delay
+      ... @defer(label: "mobileDetails") {
+        mobileDetails {
+          planName
+          contractTerm {
+            startDate
+            endDate
+          }
+          hasUnlimitedData
+          deviceName
+          discount {
+            type
+            percentage
+          }
+          monthlyPrice
+          originalPrice
+          phoneNumber
+          
+          # Data usage info loads with medium delay
+          ... @defer(label: "dataUsageInfo") {
+            dataUsage
+            dataLimit
+          }
+          
+          # Billing info loads with longer delay
+          ... @defer(label: "billingInfo") {
+            billAmount
+            debitDate
+          }
+        }
+      }
+    }
+  }
+`;
+
+// Mobile App Queries - for eager loading implementation (no defer)
+export const MOBILE_APP_QUERY_EAGER = gql`
+  query MobileAppQueryEager {
+    # All data loads at once
+    currentUser {
+      id
+      name
+      phoneNumber
+      accountNumber
+      mobileDetails {
+        billAmount
+        debitDate
+        planName
+        contractTerm {
+          startDate
+          endDate
+        }
+        hasUnlimitedData
+        deviceName
+        discount {
+          type
+          percentage
+        }
+        monthlyPrice
+        originalPrice
+        phoneNumber
+        dataUsage
+        dataLimit
+      }
+    }
+  }
+`;

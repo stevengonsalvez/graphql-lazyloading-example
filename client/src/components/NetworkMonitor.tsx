@@ -11,7 +11,7 @@ type NetworkEvent = {
 
 const NetworkMonitor: React.FC = () => {
   const [events, setEvents] = useState<NetworkEvent[]>([]);
-  const [expanded, setExpanded] = useState(true);
+  const [expanded, setExpanded] = useState(false);
 
   // Listen for console.log events to capture network activity
   useEffect(() => {
