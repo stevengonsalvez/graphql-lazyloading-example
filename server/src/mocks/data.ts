@@ -11,6 +11,7 @@ export const currentUserMock = {
   id: '1',
   name: 'STEVEN',
   phoneNumber: '07732 502 509',
+  accountNumber: '210078219',
   loyaltyPoints: 245,
   accountUpdates: [
     {
@@ -69,7 +70,27 @@ export const currentUserMock = {
       imageUrl: '/protection.jpg',
       actionUrl: '/services/device-protection'
     }
-  ]
+  ],
+  mobileDetails: {
+    billAmount: 40.89,
+    debitDate: '24 Mar 25',
+    planName: 'Essential Unlimited £74',
+    contractTerm: {
+      startDate: '15 Oct 2023',
+      endDate: '15 Oct 2025'
+    },
+    hasUnlimitedData: true,
+    deviceName: 'Apple iPhone 15',
+    discount: {
+      type: 'EE: Colleague',
+      percentage: 50
+    },
+    monthlyPrice: 37.00,
+    originalPrice: 74.00,
+    phoneNumber: '+44 7700 900123',
+    dataUsage: 7.8,
+    dataLimit: 25
+  }
 };
 
 // Top tasks

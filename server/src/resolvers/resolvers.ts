@@ -12,6 +12,9 @@ export const resolvers = {
   Query: {
     // Get current user information
     currentUser: async () => {
+      // Add a 1-second delay for the basic user data
+      console.log('Resolving currentUser with 1-second delay...');
+      await delay(1000);
       return currentUserMock;
     },
     
@@ -94,6 +97,25 @@ export const resolvers = {
         await delay(500); // Simulate delay between items
         yield update;
       }
+    },
+    
+    // Deferred loading of mobile details
+    mobileDetails: async () => {
+      console.log('Resolving mobileDetails with staggered delays...');
+      // Return a modified version of the mobile details with delay
+      const mobileDetails = {...currentUserMock.mobileDetails};
+
+      // Simulate a basic mobile details return with only account info first
+      await delay(2000); // 2 second delay for basic account info (increased from 1)
+      
+      // Return the initial object with account info only
+      return {
+        ...mobileDetails,
+        // Data usage fields will be resolved separately
+        _dataFields: null,
+        // Billing fields will be resolved separately
+        _billingFields: null
+      };
     }
   },
   
@@ -224,6 +246,48 @@ export const resolvers = {
         await delay(500); // Simulate delay between help articles
         yield article;
       }
+    }
+  },
+  
+  // Add resolvers for MobileDetails to handle staggered loading
+  MobileDetails: {
+    // Basic fields with staggered delays
+    planName: async (parent: any) => {
+      console.log('Resolving planName with 3-second delay...');
+      await delay(3000);
+      return currentUserMock.mobileDetails.planName;
+    },
+    
+    phoneNumber: async (parent: any) => {
+      console.log('Resolving phoneNumber with 4-second delay...');
+      await delay(4000);
+      return currentUserMock.mobileDetails.phoneNumber;
+    },
+    
+    // Data usage fields with 6-second delay (increased from 4)
+    dataUsage: async (parent: any) => {
+      console.log('Resolving dataUsage with 6-second delay...');
+      await delay(6000);
+      return currentUserMock.mobileDetails.dataUsage;
+    },
+    
+    dataLimit: async (parent: any) => {
+      console.log('Resolving dataLimit with 6-second delay...');
+      await delay(6000);
+      return currentUserMock.mobileDetails.dataLimit;
+    },
+    
+    // Billing fields with 10-second delay (increased from 7)
+    billAmount: async (parent: any) => {
+      console.log('Resolving billAmount with 10-second delay...');
+      await delay(10000);
+      return currentUserMock.mobileDetails.billAmount;
+    },
+    
+    debitDate: async (parent: any) => {
+      console.log('Resolving debitDate with 10-second delay...');
+      await delay(10000);
+      return currentUserMock.mobileDetails.debitDate;
     }
   }
 };

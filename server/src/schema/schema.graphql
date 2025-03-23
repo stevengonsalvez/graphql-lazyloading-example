@@ -33,6 +33,10 @@ type User {
   billInformation: BillInformation
   # This will be deferred to simulate lazy loading
   recommendations: [Recommendation!]
+  # New field for mobile account number
+  accountNumber: String
+  # New field for mobile details
+  mobileDetails: MobileDetails
 }
 
 type BillInformation {
@@ -174,4 +178,30 @@ type HelpArticle {
   url: String!
   # Full content can be deferred
   fullContent: String
+}
+
+# Additional types for mobile app UI
+type MobileDetails {
+  billAmount: Float!
+  debitDate: String!
+  planName: String!
+  contractTerm: ContractTerm!
+  hasUnlimitedData: Boolean!
+  deviceName: String
+  discount: Discount
+  monthlyPrice: Float!
+  originalPrice: Float
+  phoneNumber: String
+  dataUsage: Float
+  dataLimit: Float
+}
+
+type ContractTerm {
+  startDate: String!
+  endDate: String!
+}
+
+type Discount {
+  type: String!
+  percentage: Int!
 }
